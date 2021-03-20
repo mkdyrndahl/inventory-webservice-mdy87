@@ -117,3 +117,7 @@ exp.delete('/CartMDy87', (req, res) => {
     cart = cart.filter(item => item.sku != sku)
     res.send(cart)
 })
+
+exp.listen(port, () => {
+    console.log(`Web service now listening on port ${port}`)
+})

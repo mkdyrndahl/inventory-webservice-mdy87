@@ -66,26 +66,40 @@ let cart = [
     
 ]
 
+exp.use(bodyParser.json())
 // The webservice handles all HTTP requests through the express framework. 
 
 // POST
 // Once a POST request is received within the cartMDy87 route, 
 exp.post('/cartMDy87', (req,res) => {
-    // Ensure that the quantity is updated if the cartItem exists 
-    const exists = (cartItem) => cartItem.sku == req.body.sku 
-    if(cart.some(exists)){
-        cart.cartItem.quantity++
-        res.send(cart.cartItem)
-    } else {
-        var item = {
-            sku: req.body.sku,
-            name: req.body.name,
-            price: req.body.price,
-            quantity: 1
-        }
-        cart.push(item)
-        res.send(item)
+    var item = {
+        sku: req.body.sku,
+        name: req.body.name,
+        price: req.body.price,
+        quantity: 1
     }
+    var index = 0
+
+    // Ensure that the quantity is updated if the cartItem exists 
+    const exists = (cartItem) => cartItem.sku == item.sku 
+
+    // Check if the item exists in the cart, and if it does, update the quantity of items
+    if(cart.some(exists) == true){
+        cart.forEach(cartItem => {
+            if(cartItem.sku == item.sku){
+                index = cart.indexOf(cartItem);
+            }
+        })
+        var cartItem = cart[index]
+        cartItem.quantity += item.quantity
+        cart[index] = cartItem
+        res.send(cart)
+
+    } else {
+        cart.push(item)
+        res.send(cart)
+    }
+
 })
 
 // If the POST request is received in the checkout route, the cart is processed and the correct number of items in the inventory are removed.
@@ -102,19 +116,22 @@ exp.post('/cartMDy87/checkout', (req, res) => {
 // GET 
 // Once a GET request is received in the inventoryMDy87 route, an updated inventory list is sent to the application.
 exp.get('/inventoryMDy87', (req, res) => {
+    res.header("content-type: application/json")
     res.send(inventory)
 })
 
 exp.get('/cartMDy87', (req, res) => {
+    res.header("content-type: application/json")
     res.send(cart)
 })
 
 // DELETE
 // Once a DELETE request is received the cart will remove the specified item from the cart
 // Might have to change this to -1 quantity at some point
-exp.delete('/CartMDy87', (req, res) => {
+exp.delete('/cartMDy87', (req, res) => {
     const sku = req.params.sku
     cart = cart.filter(item => item.sku != sku)
+    res.header("content-type: application/json")
     res.send(cart)
 })
 

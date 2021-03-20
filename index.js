@@ -104,13 +104,20 @@ exp.post('/cartMDy87', (req,res) => {
 
 // If the POST request is received in the checkout route, the cart is processed and the correct number of items in the inventory are removed.
 exp.post('/cartMDy87/checkout', (req, res) => {
-    cart.foreach(cartItem => {
-        inventory.foreach(invItem => {
+    cart.forEach(cartItem => {
+        inventory.forEach(invItem => {
             if(invItem.sku == cartItem.sku){
-                invItem.quantity = inveItem.quantity - cartItem.quantity
+                if(invItem.quantity <= 0) {
+                    invItem.quantity = invItem.quantity - cartItem.quantity
+                } else {
+                    invItem.quantity = "OUT OF STOCK"
+                }
+                inventory[invItem] = invItem
             }
         })
     })
+    res.header("content-type: application/json")
+    res.send(inventory)
 })
 
 // GET 

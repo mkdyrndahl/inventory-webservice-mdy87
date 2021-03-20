@@ -84,16 +84,17 @@ exp.post('/cartMDy87', (req,res) => {
     // Ensure that the quantity is updated if the cartItem exists 
     const exists = (cartItem) => cartItem.sku == item.sku 
 
-    // Check if theres space in the inventory 
-
     // Check if the item exists in the cart, and if it does, update the quantity of items
     if(cart.some(exists) == true){
-        // Iterate through the cart to check the index of the item, and iterate through the inventory to check for quantity left in the inventory
+
+        // Iterate through the cart to check the index of the item, and iterate through the inventory to check for total quantity in the inventory
         totalQuantity = 0;
         cart.forEach(cartItem => {
+        
             if(cartItem.sku == item.sku){
                 index = cart.indexOf(cartItem);
             }
+        
             inventory.forEach(invItem => {
                 if(invItem.sku == cartItem.sku){
                     totalQuantity = invItem.quantity
@@ -103,19 +104,22 @@ exp.post('/cartMDy87', (req,res) => {
 
         var cartItem = cart[index]
         
-        if(totalQuantity >= cartItem.quantity) {
+        // Check if the totalQuantity in the inventory is larger than the quantity added to the cart
+        if(totalQuantity > cartItem.quantity && totalQuantity != "OUT OF STOCK") {
+            
             cartItem.quantity += item.quantity
             cart[index] = cartItem
         } else {
+            
             console.log(cartItem.name + " is OUT OF STOCK")
         }
-        res.send(cart)
 
+        res.send(cart)
     } else {
+
         cart.push(item)
         res.send(cart)
     }
-
 })
 
 // If the POST request is received in the checkout route, the cart is processed and the correct number of items in the inventory are removed.

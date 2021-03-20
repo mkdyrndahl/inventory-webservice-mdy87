@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const e = require('express')
 
 const exp = express()
 const port = 8000
@@ -83,16 +84,31 @@ exp.post('/cartMDy87', (req,res) => {
     // Ensure that the quantity is updated if the cartItem exists 
     const exists = (cartItem) => cartItem.sku == item.sku 
 
+    // Check if theres space in the inventory 
+
     // Check if the item exists in the cart, and if it does, update the quantity of items
     if(cart.some(exists) == true){
+        // Iterate through the cart to check the index of the item, and iterate through the inventory to check for quantity left in the inventory
+        totalQuantity = 0;
         cart.forEach(cartItem => {
             if(cartItem.sku == item.sku){
                 index = cart.indexOf(cartItem);
             }
+            inventory.forEach(invItem => {
+                if(invItem.sku == cartItem.sku){
+                    totalQuantity = invItem.quantity
+                }
+            })
         })
+
         var cartItem = cart[index]
-        cartItem.quantity += item.quantity
-        cart[index] = cartItem
+        
+        if(totalQuantity >= cartItem.quantity) {
+            cartItem.quantity += item.quantity
+            cart[index] = cartItem
+        } else {
+            console.log(cartItem.name + " is OUT OF STOCK")
+        }
         res.send(cart)
 
     } else {

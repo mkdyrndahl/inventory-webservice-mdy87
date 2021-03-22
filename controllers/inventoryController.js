@@ -1,5 +1,4 @@
-
-let inventory = [
+let inventoryList = [
     {
         "sku": "59779-642",
         "name": "Napkin - Beverage 1 Ply",
@@ -53,14 +52,10 @@ let inventory = [
     }
 ]
 
-let cart = [
-    
-]
-
 exports.getInventory = function(req, res) {
-
     res.header("content-type: application/json")
-    res.send(req.body.inventory)
+    res.send(inventoryList)
+
 }
 
 

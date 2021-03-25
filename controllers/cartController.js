@@ -1,4 +1,3 @@
-var cart = []
 
 exports.addItemMDy87 = function(req, res)   {
     
@@ -20,44 +19,44 @@ exports.addItemMDy87 = function(req, res)   {
 
         // Iterate through the cart to check the index of the item, and iterate through the inventory to check for total quantity in the inventory
         totalQuantity = 0;
-        cart.forEach(cartItem => {
+        global.cart.forEach(cartItem => {
         
             if(cartItem.sku == item.sku){
-                index = cart.indexOf(cartItem);
+                index = global.cart.indexOf(cartItem);
             }
         
-            inventory.forEach(invItem => {
+            global.inventory.forEach(invItem => {
                 if(invItem.sku == cartItem.sku){
                     totalQuantity = invItem.quantity
                 }
             })
         })
 
-        var cartItem = cart[index]
+        var cartItem = global.cart[index]
         
         // Check if the totalQuantity in the inventory is larger than the quantity added to the cart
         if(totalQuantity > cartItem.quantity && totalQuantity != "OUT OF STOCK") {
             
             cartItem.quantity += item.quantity
-            cart[index] = cartItem
+            global.cart[index] = cartItem
         } else {
             
             console.log(cartItem.name + " is OUT OF STOCK")
         }
 
-        res.send(cart)
+        res.send(JSON.stringify(global.cart))
     } else {
 
-        cart.push(item)
-        res.send(cart)
+        global.cart.push(item)
+        res.send(JSON.stringify(global.cart))
     }
 }
 
 // If the POST request is received in the checkout route, the cart is processed and the correct number of items in the inventory are removed.
 exports.checkout = function(req, res)   {
     
-    cart.forEach(cartItem => {
-        inventory.forEach(invItem => {
+    global.cart.forEach(cartItem => {
+        global.inventory.forEach(invItem => {
             if(invItem.sku == cartItem.sku){
                 if(invItem.quantity <= 0) {
                     invItem.quantity = invItem.quantity - cartItem.quantity
@@ -69,12 +68,12 @@ exports.checkout = function(req, res)   {
         })
     })
     res.header("content-type: application/json")
-    res.send(inventory)
+    res.send(JSON.stringify(global.inventory))
 }
 
 // Get request sends cart data
 exports.getCartMDy87 = function(req, res)   {
-    res.send(cart)
+    res.send(global.cart)
 }
 
 
@@ -83,7 +82,7 @@ exports.getCartMDy87 = function(req, res)   {
 // Might have to change this to -1 quantity at some point
 exports.removeItemMDy87 = function(req, res)    {
     const sku = req.body.sku
-    cart = cart.filter(item => item.sku != sku)
+    cart = global.cart.filter(item => item.sku != sku)
     res.header("content-type: application/json")
-    res.send(cart)
+    res.send(JSON.stringify(global.cart))
 }

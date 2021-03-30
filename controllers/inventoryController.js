@@ -1,6 +1,6 @@
 exports.getInventory = function(req, res) {
     res.header("content-type: application/json")
-    console.log(global.inventory)
+    res.header("Access-Control-Allow-Origin: *")
     res.send(JSON.stringify(global.inventory))
 
 }

@@ -1,6 +1,6 @@
 
 exports.addItemMDy87 = function(req, res)   {
-    
+    res.header("Access-Control-Allow-Origin: *")
 
     var item = {
         sku: req.body.sku,
@@ -54,8 +54,12 @@ exports.addItemMDy87 = function(req, res)   {
 
 // If the POST request is received in the checkout route, the cart is processed and the correct number of items in the inventory are removed.
 exports.checkout = function(req, res)   {
-    
+    res.header("Access-Control-Allow-Origin: *")
+    var total = 0;
+
     global.cart.forEach(cartItem => {
+        total += cartItem.price
+
         global.inventory.forEach(invItem => {
             if(invItem.sku == cartItem.sku){
                 if(invItem.quantity <= 0) {
@@ -67,6 +71,9 @@ exports.checkout = function(req, res)   {
             }
         })
     })
+
+
+
     res.header("content-type: application/json")
     res.send(JSON.stringify(global.inventory))
 }
@@ -81,6 +88,7 @@ exports.getCartMDy87 = function(req, res)   {
 // Once a DELETE request is received the cart will remove the specified item from the cart
 // Might have to change this to -1 quantity at some point
 exports.removeItemMDy87 = function(req, res)    {
+    res.header("Access-Control-Allow-Origin: *")
     const sku = req.body.sku
     cart = global.cart.filter(item => item.sku != sku)
     res.header("content-type: application/json")

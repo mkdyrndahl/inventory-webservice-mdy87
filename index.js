@@ -5,9 +5,13 @@ const cors = require('cors')
 const app = express()
 const port = 8000
 
-const corsOptions = {
-    origin : "*"
-}
+app.options('*', ()=>(req, res)=>{
+    res.setHeader("Access-Control-Allow-Origin", "*")
+    res.setHeader('Access-Control-Allow-Methods', '*')
+    res.setHeader("Access-Control-Allow-Headers", "*")
+    res.end()
+})
+
 
 global.inventory = [
     {
@@ -70,6 +74,8 @@ app.use(bodyParser.json())
 
 const cartRouter = require('./routes/cartRoutes')
 const inventoryRouter = require('./routes/inventoryRoutes')
+
+
 
 app.use('/', inventoryRouter)
 app.use('/', cartRouter)

@@ -62,7 +62,7 @@ exports.checkout = function(req, res)   {
 
         global.inventory.forEach(invItem => {
             if(invItem.sku == cartItem.sku){
-                if(invItem.quantity <= 0) {
+                if(invItem.quantity > 0) {
                     invItem.quantity = invItem.quantity - cartItem.quantity
                 } else {
                     invItem.quantity = "OUT OF STOCK"
